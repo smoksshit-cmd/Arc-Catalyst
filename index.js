@@ -32,11 +32,14 @@ function loadSettings() {
       extension_settings[extensionName][key] = defaultSettings[key];
     }
   }
+  // preserve persisted chatStates — never overwrite with defaultSettings
+  if (!extension_settings[extensionName].chatStates) {
+    extension_settings[extensionName].chatStates = {};
+  }
 }
 function getSettings() { return extension_settings[extensionName]; }
 
 // ─── Runtime state ─────────────────────────────────────────────────────────
-const chatStates = {};
 
 function getChatKey() {
   try {
@@ -46,8 +49,10 @@ function getChatKey() {
 }
 
 function getChatState(key) {
-  if (!chatStates[key]) {
-    chatStates[key] = {
+  const s = getSettings();
+  if (!s.chatStates) s.chatStates = {};
+  if (!s.chatStates[key]) {
+    s.chatStates[key] = {
       messagesSinceLastArc: 0,
       messageCount: 0,
       arcCount: 0,
@@ -56,7 +61,11 @@ function getChatState(key) {
       messagesSinceOpenArcStart: 0,
     };
   }
-  return chatStates[key];
+  return s.chatStates[key];
+}
+
+function saveChatState() {
+  saveSettingsDebounced();
 }
 
 // ─── Genre config ──────────────────────────────────────────────────────────
@@ -160,6 +169,7 @@ function injectArc(prompt, level, genres) {
     promptExcerpt: prompt.substring(0, 150) + '...',
   });
   pendingArcMark = { level, genres: [...genres] };
+  saveChatState();
   if (getSettings().showNotifications) showArcNotification(genres, level);
   updatePanelUI();
 }
@@ -180,6 +190,7 @@ function closeOpenArc() {
   const state = getChatState(getChatKey());
   state.openArc = null;
   state.messagesSinceOpenArcStart = 0;
+  saveChatState();
   updatePanelUI();
 }
 
@@ -413,6 +424,7 @@ function onMessageReceived() {
   state.messageCount++;
   state.messagesSinceLastArc++;
   if (state.openArc !== null) state.messagesSinceOpenArcStart++;
+  saveChatState();
 
   setExtensionPrompt(extensionName, '', extension_prompt_types.IN_CHAT, 0);
 
