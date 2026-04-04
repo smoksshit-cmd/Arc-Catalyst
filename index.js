@@ -246,35 +246,51 @@ function dismissNotification(el) {
 function showPromptPreview(prompt, level, genres) {
   document.getElementById('arc-preview-modal')?.remove();
   const cfg = arcLevelConfig[level];
+
   const modal = document.createElement('div');
   modal.id = 'arc-preview-modal';
-  modal.className = 'arc-preview-modal';
-  modal.innerHTML = `
-    <div class="arc-preview-inner">
-      <div class="arc-preview-header">
-        <div class="arc-preview-header-left">
-          <span class="arc-preview-icon">${cfg.icon}</span>
-          <span class="arc-preview-title">Промпт · ${cfg.label}</span>
-        </div>
-        <button class="arc-preview-close">✕</button>
+  modal.style.cssText = 'position:fixed;inset:0;z-index:200000;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.22s ease;';
+
+  const inner = document.createElement('div');
+  inner.style.cssText = 'width:min(580px,92vw);max-height:88vh;overflow-y:auto;background:rgba(18,18,24,0.88);backdrop-filter:blur(28px);border:1px solid rgba(255,255,255,0.12);border-radius:14px;box-shadow:0 32px 72px rgba(0,0,0,0.65);display:flex;flex-direction:column;transform:scale(0.97);transition:transform 0.26s cubic-bezier(0.22,1,0.36,1);';
+
+  inner.innerHTML = `
+    <div class="arc-preview-header">
+      <div class="arc-preview-header-left">
+        <span class="arc-preview-icon">${cfg.icon}</span>
+        <span class="arc-preview-title">Промпт · ${cfg.label}</span>
       </div>
-      <div class="arc-preview-hint">Можно отредактировать перед отправкой</div>
-      <textarea class="arc-preview-textarea" spellcheck="false">${prompt}</textarea>
-      <div class="arc-preview-actions">
-        <button class="arc-preview-cancel">Отмена</button>
-        <button class="arc-preview-send">${cfg.icon} Отправить</button>
-      </div>
+      <button class="arc-preview-close">✕</button>
+    </div>
+    <div class="arc-preview-hint">Можно отредактировать перед отправкой</div>
+    <textarea class="arc-preview-textarea" spellcheck="false">${prompt}</textarea>
+    <div class="arc-preview-actions">
+      <button class="arc-preview-cancel">Отмена</button>
+      <button class="arc-preview-send">${cfg.icon} Отправить</button>
     </div>`;
-  document.body.appendChild(modal);
-  modal.querySelector('.arc-preview-close').addEventListener('click', () => modal.remove());
-  modal.querySelector('.arc-preview-cancel').addEventListener('click', () => modal.remove());
-  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
-  modal.querySelector('.arc-preview-send').addEventListener('click', () => {
-    const edited = modal.querySelector('.arc-preview-textarea').value;
+
+  modal.appendChild(inner);
+  document.documentElement.appendChild(modal);
+
+  const close = () => {
+    modal.style.opacity = '0';
+    inner.style.transform = 'scale(0.97)';
+    setTimeout(() => modal.remove(), 240);
+  };
+
+  inner.querySelector('.arc-preview-close').addEventListener('click', close);
+  inner.querySelector('.arc-preview-cancel').addEventListener('click', close);
+  modal.addEventListener('click', e => { if (e.target === modal) close(); });
+  inner.querySelector('.arc-preview-send').addEventListener('click', () => {
+    const edited = inner.querySelector('.arc-preview-textarea').value;
     modal.remove();
     injectArc(edited, level, genres);
   });
-  requestAnimationFrame(() => modal.classList.add('arc-preview-show'));
+
+  requestAnimationFrame(() => {
+    modal.style.opacity = '1';
+    inner.style.transform = 'scale(1)';
+  });
 }
 
 // ─── Export history ────────────────────────────────────────────────────────
