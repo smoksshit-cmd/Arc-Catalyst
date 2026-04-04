@@ -220,9 +220,7 @@ function showArcNotification(genres, level = 0) {
     <div class="arc-notif-glow"></div>
     <div class="arc-notif-bar"></div>
     <div class="arc-notif-inner">
-      <div class="arc-notif-left">
-        <span class="arc-notif-lvl-icon">${cfg.icon}</span>
-      </div>
+      <span class="arc-notif-lvl-icon">${cfg.icon}</span>
       <div class="arc-notif-body">
         <div class="arc-notif-level-name">${cfg.label}</div>
         <div class="arc-notif-genres">${genreLabel}</div>
