@@ -249,10 +249,10 @@ function showPromptPreview(prompt, level, genres) {
 
   const modal = document.createElement('div');
   modal.id = 'arc-preview-modal';
-  modal.style.cssText = 'position:fixed;inset:0;z-index:200000;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.22s ease;';
+  modal.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;z-index:200000;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.22s ease;box-sizing:border-box;';
 
   const inner = document.createElement('div');
-  inner.style.cssText = 'width:min(580px,92vw);max-height:88vh;overflow-y:auto;background:rgba(18,18,24,0.88);backdrop-filter:blur(28px);border:1px solid rgba(255,255,255,0.12);border-radius:14px;box-shadow:0 32px 72px rgba(0,0,0,0.65);display:flex;flex-direction:column;transform:scale(0.97);transition:transform 0.26s cubic-bezier(0.22,1,0.36,1);';
+  inner.style.cssText = 'width:min(580px,92vw);max-height:80vh;overflow-y:auto;background:rgba(18,18,24,0.88);backdrop-filter:blur(28px);border:1px solid rgba(255,255,255,0.12);border-radius:14px;box-shadow:0 32px 72px rgba(0,0,0,0.65);display:flex;flex-direction:column;flex-shrink:0;transform:scale(0.97);transition:transform 0.26s cubic-bezier(0.22,1,0.36,1);margin:auto;';
 
   inner.innerHTML = `
     <div class="arc-preview-header">
