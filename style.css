@@ -781,15 +781,16 @@
   opacity: 0;
   transition: opacity 0.22s ease;
   backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .arc-preview-modal.arc-preview-show { opacity: 1; }
 
 .arc-preview-inner {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -46%) scale(0.99);
+  /* centered by flexbox on parent */
+  transform: translateY(16px) scale(0.98);
   width: min(620px, 92vw);
   max-height: 90vh;
   overflow-y: auto;
@@ -801,7 +802,7 @@
 }
 
 .arc-preview-modal.arc-preview-show .arc-preview-inner {
-  transform: translate(-50%, -50%) scale(1);
+  transform: translateY(0) scale(1);
 }
 
 .arc-preview-header {
