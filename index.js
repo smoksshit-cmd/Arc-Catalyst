@@ -91,6 +91,18 @@ const genreConfig = [
   { id: 'personal',  label: 'Personal',  icon: '🪞',  color: '#a0785a',
     hint: 'someone from the past, a secret about one of the characters, a debt or promise coming due',
     keywords: ['past','memory','secret','debt','promise','truth','family','mistake','regret','real','name','before','once','knew','owe','reveal'] },
+  { id: 'drama',     label: 'Драма',     icon: '🎭',  color: '#b05c8a',
+    hint: 'внутренние конфликты, разрушенные отношения, непростые решения, боль потери, невысказанное',
+    keywords: ['pain','tears','silence','forgive','guilt','conflict','argue','hurt','loss','grief','confession','regret','separation','despair','suffer','feeling'] },
+  { id: 'slice',     label: 'Повседневность', icon: '☕', color: '#6a9e72',
+    hint: 'маленькие моменты, тихая жизнь, уют и рутина, красота обычного дня',
+    keywords: ['morning','coffee','walk','quiet','ordinary','daily','habit','home','evening','calm','cozy','food','weather','shop','street','routine'] },
+  { id: 'mundane',   label: 'Бытовуха',  icon: '🧹',  color: '#8a7a5a',
+    hint: 'бытовые неурядицы, мелкие конфликты, усталость от повседневности, накопившееся раздражение',
+    keywords: ['mess','broken','annoyed','forgot','late','money','bill','work','tired','bored','problem','chores','repair','debt','clutter','mundane'] },
+  { id: 'action',    label: 'Экшен',     icon: '💨',  color: '#c0622a',
+    hint: 'преследование, схватка, опасность не ждёт, решения принимаются на лету, адреналин',
+    keywords: ['run','strike','shot','explosion','chase','danger','attack','dodge','speed','dash','fight','crash','jump','grab','wound','escape'] },
 ];
 
 // ─── Arc levels ────────────────────────────────────────────────────────────
