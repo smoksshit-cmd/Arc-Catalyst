@@ -21,6 +21,7 @@ const defaultSettings = {
   antiDuplicate: true,
   autoGenre: true,
   previewBeforeSend: false,
+  arcContext: '',
 };
 
 function loadSettings() {
@@ -91,18 +92,6 @@ const genreConfig = [
   { id: 'personal',  label: 'Personal',  icon: '🪞',  color: '#a0785a',
     hint: 'someone from the past, a secret about one of the characters, a debt or promise coming due',
     keywords: ['past','memory','secret','debt','promise','truth','family','mistake','regret','real','name','before','once','knew','owe','reveal'] },
-  { id: 'drama',     label: 'Драма',     icon: '🎭',  color: '#b05c8a',
-    hint: 'внутренние конфликты, разрушенные отношения, непростые решения, боль потери, невысказанное',
-    keywords: ['pain','tears','silence','forgive','guilt','conflict','argue','hurt','loss','grief','confession','regret','separation','despair','suffer','feeling'] },
-  { id: 'slice',     label: 'Повседневность', icon: '☕', color: '#6a9e72',
-    hint: 'маленькие моменты, тихая жизнь, уют и рутина, красота обычного дня',
-    keywords: ['morning','coffee','walk','quiet','ordinary','daily','habit','home','evening','calm','cozy','food','weather','shop','street','routine'] },
-  { id: 'mundane',   label: 'Бытовуха',  icon: '🧹',  color: '#8a7a5a',
-    hint: 'бытовые неурядицы, мелкие конфликты, усталость от повседневности, накопившееся раздражение',
-    keywords: ['mess','broken','annoyed','forgot','late','money','bill','work','tired','bored','problem','chores','repair','debt','clutter','mundane'] },
-  { id: 'action',    label: 'Экшен',     icon: '💨',  color: '#c0622a',
-    hint: 'преследование, схватка, опасность не ждёт, решения принимаются на лету, адреналин',
-    keywords: ['run','strike','shot','explosion','chase','danger','attack','dodge','speed','dash','fight','crash','jump','grab','wound','escape'] },
 ];
 
 // ─── Arc levels ────────────────────────────────────────────────────────────
@@ -126,7 +115,9 @@ function buildPrompt(level, recentContext, genres) {
   const sel = genres.map(id => genreConfig.find(g => g.id === id)).filter(Boolean);
   const gb = sel.map(g => `- ${g.icon} ${g.label}: ${g.hint}`).join('\n');
   const cb = recentContext.trim() ? `Here is what has been happening in the current scene:\n---\n${recentContext}\n---\n\n` : '';
-  return (arcLevelConfig[level] || arcLevelConfig[0]).buildPrompt(cb, gb);
+  const raw = (getSettings().arcContext || '').trim();
+  const ctx = raw ? `Arc theme: ${raw.slice(0, 200)}\n` : '';
+  return (arcLevelConfig[level] || arcLevelConfig[0]).buildPrompt(cb + ctx, gb);
 }
 
 function getRecentContext(maxMessages) {
@@ -447,6 +438,12 @@ function onMessageReceived() {
 
   if (s.arcLevels && state.openArc !== null) {
     const cfg = arcLevelConfig[state.openArc.level];
+    // Auto-close after climax (level 2) — 3 messages grace then close
+    if (state.openArc.level >= 2 && state.messagesSinceOpenArcStart >= 3) {
+      closeOpenArc();
+      updatePanelUI();
+      return;
+    }
     if (cfg.nextAfterMessages && state.messagesSinceOpenArcStart >= cfg.nextAfterMessages) {
       if (Math.random() * 100 < 40) { triggerArc(null, false); updatePanelUI(); return; }
     }
@@ -651,6 +648,22 @@ function buildSettingsHTML() {
     </div></div>
   </div>
 
+
+  <!-- ══ КОНТЕКСТ АРКИ ══ -->
+  <div class="arc-sub" id="arc-sub-context">
+    <button class="arc-sub-header" data-target="arc-sub-context">
+      <span class="arc-sub-icon">🎭</span>
+      <span class="arc-sub-title">Контекст арки</span>
+      <span class="arc-sub-chevron">›</span>
+    </button>
+    <div class="arc-sub-body"><div>
+      <div class="arc-field">
+        <label class="arc-field-label">Тема / фазы</label>
+        <textarea id="arc-context-input" rows="4" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:8px 10px;color:inherit;font-size:11px;line-height:1.6;resize:vertical;outline:none;box-sizing:border-box;" placeholder="Опиши тему арки, фазы, образы."></textarea>
+        <span class="arc-field-hint">Подсказка вплетается в Зерно → Эскалацию → Кульминацию</span>
+      </div>
+    </div></div>
+  </div>
   <div class="arc-panel-footer">Ctrl+Shift+A — быстрый запуск · ◈ метка в чате</div>
 </div>`;
 }
@@ -737,6 +750,13 @@ function initUI() {
     showPromptPreview(buildPrompt(level, getRecentContext(s.contextMessages), genres), level, genres);
   });
   document.getElementById('arc-export-btn')?.addEventListener('click', exportArcHistory);
+
+  // Arc context textarea
+  const ctxInput = document.getElementById('arc-context-input');
+  if (ctxInput) {
+    ctxInput.value = s.arcContext || '';
+    ctxInput.addEventListener('input', () => { getSettings().arcContext = ctxInput.value; saveSettingsDebounced(); });
+  }
 
   updatePanelUI();
 }
