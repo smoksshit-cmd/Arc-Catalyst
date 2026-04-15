@@ -98,15 +98,15 @@ const genreConfig = [
 const arcLevelConfig = [
   {
     level: 0, name: 'Seed', icon: '🌱', label: 'Зерно', nextAfterMessages: 8,
-    buildPrompt: (ctx, gb) => `[OOC]${ctx}Continue the scene naturally. Weave in a small story seed — a tension or unresolved detail already present. Genre: ${gb}. 1–2 short paragraphs only, no resolution.[/OOC]`
+    buildPrompt: (ctx, gb) => `[OOC — instruction for the AI, not part of the story]${ctx}As you write your next response, naturally weave in one small story seed — a tension or unresolved detail that is already present in the scene. Do not announce it. Do not resolve it. Genre tones: ${gb}. The seed should fit seamlessly into your response at whatever length feels natural.[/OOC]`
   },
   {
     level: 1, name: 'Escalation', icon: '🔥', label: 'Эскалация', nextAfterMessages: 12,
-    buildPrompt: (ctx, gb) => `[OOC]${ctx}Continue the scene. Escalate the existing arc — raise tension, no resolution yet. Genre: ${gb}. 1–2 short paragraphs only.[/OOC]`
+    buildPrompt: (ctx, gb) => `[OOC — instruction for the AI, not part of the story]${ctx}As you write your next response, escalate the existing arc — raise the tension, push the conflict forward, but do not resolve it yet. Genre tones: ${gb}. Let it develop naturally within your response.[/OOC]`
   },
   {
     level: 2, name: 'Climax', icon: '💥', label: 'Кульминация', nextAfterMessages: null,
-    buildPrompt: (ctx, gb) => `[OOC]${ctx}Continue the scene. Bring the arc to its climax — one decisive moment, something changes permanently. Genre: ${gb}. 2–3 short paragraphs only.[/OOC]`
+    buildPrompt: (ctx, gb) => `[OOC — instruction for the AI, not part of the story]${ctx}As you write your next response, bring the arc to its climax. One decisive moment — something shifts permanently. Genre tones: ${gb}. Let it land naturally within your response, do not announce it.[/OOC]`
   },
 ];
 
